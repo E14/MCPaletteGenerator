@@ -7,7 +7,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        luaVersion: ["5.1.5", "5.2.4", "5.3", "luajit-2.0.5", "luajit-2.1.0-beta3", "luajit-openresty", "5.1"]
+        luaVersion: ["5.3"]
 
     runs-on: ubuntu-latest
 
@@ -31,4 +31,4 @@ jobs:
         luarocks install lpeg
         luarocks install dkjson
         luarocks install argparse
-        lua -e 'require("dkjson").encode({{Foo = "BAR"}, {1, 2, 3}}, {indent=true})'
+        lua -e 'print(require("dkjson").encode({{Foo = "BAR"}, {1, 2, 3}}, {indent=true}))'
