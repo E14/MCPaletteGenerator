@@ -3,19 +3,30 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        luaVersion: ["5.1.5", "5.2.4", "5.3", "luajit-2.0.5", "luajit-2.1.0-beta3", "luajit-openresty", "5.1"]
+
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v1
-    
-    - name: Install luarocks
-      run: apt install luarocks
-      
-    - name: Install Lua libraries
-      run: luarocks install --local dkjson argparse
-      
-    - name: Run a multi-line script
+    - uses: actions/checkout@master
+    - uses: leafo/gh-actions-lua@master
+      with:
+        luaVersion: ${{ matrix.luaVersion }}
+
+    - uses: leafo/gh-actions-luarocks@master
+
+    - name: test lua
+      run: lua -e 'print("hi from lua")'
+
+    - name: test luarocks
       run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+        echo $PATH
+        env | grep LUA
+        luarocks
+        luarocks path
+        luarocks install dkjson argparse
+        lua -e 'require("dkjson").encode({{Foo = "BAR"}, {1, 2, 3}}, {indent=true})'
